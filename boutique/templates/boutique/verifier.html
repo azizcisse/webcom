@@ -1,0 +1,102 @@
+{% extends 'boutique/base.html' %}
+
+{% block content %}
+<div class="container w-50 mt-5">
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="list-group" id="item-list">
+                <h3 class="text-center">Voici Votre liste d'Achat :</h3>
+
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post"> {% csrf_token %}
+                <input type="hidden" id="items" name="items">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Nom</label>
+                        <input type="text" id="nom" name="nom" class="form-control" id="inputEmail4" placeholder="Aziz">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPassword4">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" id="inputPassword4"
+                            placeholder="aziz@gmail.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputAddress">Addresse</label>
+                    <input type="text" name="adresse" id="adresse" class="form-control" id="inputAddress"
+                        placeholder="1234 Main St">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputCity">Ville</label>
+                        <input type="text" name="ville" id="ville" class="form-control" id="inputCity">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputState">Pays</label>
+                        <select id="pays" name="pays" class="form-control">
+                            <option selected>Senegal</option>
+                            <option>France</option>
+                            <option>Togo</option>
+                            <option>Canada</option>
+                            <option>Angleterre</option>
+                            <option>Maroc</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="inputZip">Zip</label>
+                        <input name="zipcode" id="zipcode" type="text" class="form-control">
+                    </div>
+               
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Somme Totale :</label>
+                    <input name="total" id="total" type="readOnly" class="bg-dark text-warning form-control">
+                </div>
+            </div>
+                <button type="submit" class="btn btn-primary">Commander</button>
+                <a type="reset" class="btn btn-danger" href="{% url 'home' %}">Annuler</a>
+            </form>
+        </div>
+    </div>
+
+    {% endblock content %}
+
+    {% block javascript %}
+    <script type="text/javascript">
+        if (localStorage.getItem('panier') == null) {
+            var panier = {};
+        } else {
+            panier = JSON.parse(localStorage.getItem('panier'));
+        }
+        var total = 0;
+        var nombre = 0;
+        for (item in panier) {
+            let nom = panier[item][1];
+            let quantite = panier[item][0];
+            let prix = panier[item][2];
+            nombre += quantite;
+            total += prix;
+            let itemString = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${nom}
+                   <span class="badge badge-primary badge-pill">Quantité : ${quantite}</span>
+                   <span class="badge badge-warning badge-pill">Prix : ${prix} FCFA</span>
+                </li> `;
+            $('#item-list').append(itemString);
+        }
+
+        let itemNombre = `<li class="list-group-item d-flex justify-content-between align-items-center">
+            <b class="bg-danger">Prix et Quantité Totals : </b>
+           <span class="badge badge-danger badge-pill">Nombre : ${nombre}</span>
+           <span class="badge badge-danger badge-pill">Quantité Total : ${total} FCFA</span>
+        </li> `;
+        $('#item-list').append(itemNombre);
+        $('#total').val(total + "FCFA");
+
+        $('#items').val(JSON.stringify(panier));
+
+    </script>
+    {% endblock javascript %}
